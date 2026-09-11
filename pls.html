@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUA MINGGU — Novel Web Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent-naya: #ec4899;
+            --accent-arga: #38bdf8;
+            --accent-salsa: #a855f7;
+            --accent-rani: #f59e0b;
+            --accent-orang: #10b981;
+            --border-color: #334155;
+            --chat-bg: #1e293b;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-naya: #db2777;
+            --accent-arga: #0284c7;
+            --accent-salsa: #9333ea;
+            --accent-rani: #d97706;
+            --accent-orang: #059669;
+            --border-color: #e2e8f0;
+            --chat-bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Merriweather', serif;
+            line-height: 1.8;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Header Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .brand {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-arga);
+            color: var(--accent-arga);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-naya), var(--accent-arga));
+            width: 0%;
+            z-index: 101;
+            transition: width 0.1s;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 760px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        /* Novel Header */
+        .novel-header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .novel-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-naya), var(--accent-arga));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .novel-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .tag-pov {
+            display: inline-block;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            padding: 4px 14px;
+            border-radius: 12px;
+            background-color: var(--chat-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Scene Section */
+        .scene {
+            margin-bottom: 50px;
+        }
+
+        .scene-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-arga);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+
+        .time-badge {
+            display: inline-block;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Chat Component */
+        .chat-container {
+            background-color: var(--chat-bg);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .msg-row {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .msg-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .sender {
+            font-weight: 700;
+            min-width: 65px;
+        }
+
+        .sender.naya { color: var(--accent-naya); }
+        .sender.arga { color: var(--accent-arga); }
+        .sender.salsa { color: var(--accent-salsa); }
+        .sender.rani { color: var(--accent-rani); }
+        .sender.orang { color: var(--accent-orang); }
+
+        .msg-text {
+            color: var(--text-primary);
+        }
+
+        .action-text {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: var(--chat-bg);
+            border-left: 4px solid var(--accent-naya);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .quote-box.center {
+            border-left: 4px solid var(--accent-arga);
+            text-align: center;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* Footer / Ending */
+        .ending-box {
+            text-align: center;
+            padding: 40px;
+            background: var(--chat-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        .ending-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: var(--accent-naya);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="navbar">
+        <div class="brand">DUA MINGGU</div>
+        <div class="controls">
+            <button class="btn" onclick="toggleTheme()">🌓 Mode Terang/Gelap</button>
+        </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="container">
+        <div class="novel-header">
+            <h1 class="novel-title">DUA MINGGU</h1>
+            <div class="novel-subtitle">Sebuah Cerita tentang Bertemu, Nyaman, dan Melepaskan</div>
+            <span class="tag-pov">POV Orang Ketiga — Naya & Arga</span>
+        </div>
+
+        <!-- ADEGAN 1 -->
+        <div class="scene">
+            <div class="scene-title">ADEGAN 1 — NAYA YANG MEMULAI</div>
+            <div class="time-badge">22.17 WIB</div>
+            <p>Naya menatap nama Arga di layar WhatsApp cukup lama. Jempolnya berkali-kali ingin mengetik sesuatu, tetapi selalu dihapus kembali. Akhirnya dia memberanikan diri.</p>
+            
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Ga, belum tidur?"</span></div>
+            </div>
+
+            <p>Beberapa detik kemudian.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Belum. Kenapa?"</span></div>
+            </div>
+
+            <p>Naya tersenyum kecil.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Nggak apa-apa."</span></div>
+            </div>
+
+            <p>Padahal sebenarnya Naya hanya ingin berbicara dengannya. Dia tidak tahu sejak kapan mulai menyukai Arga. Mungkin dari caranya mendengarkan. Mungkin dari caranya membuat obrolan sederhana terasa menyenangkan. Atau mungkin karena setiap kali nama Arga muncul di layar, Naya selalu tersenyum tanpa sadar.</p>
+
+            <p>Di sisi lain, Arga juga mulai menyadari sesuatu. Dia selalu menunggu pesan Naya. Setiap kali ponselnya berbunyi dan nama Naya muncul, suasana hatinya seketika berubah menjadi lebih baik. Namun Arga belum tahu bahwa perasaan itu akan membawa mereka ke sesuatu yang jauh lebih rumit.</p>
+        </div>
+
+        <!-- ADEGAN 2 -->
+        <div class="scene">
+            <div class="scene-title">ADEGAN 2 — RAHASIA</div>
+            <p>Malam itu Naya sedang video call bersama Salsa dan Rani.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender salsa">Salsa:</span><span class="msg-text">"Jujur. Lu suka Arga, kan?"</span></div>
+                <div class="msg-row"><span class="action-text">Naya diam.</span></div>
+                <div class="msg-row"><span class="sender rani">Rani:</span><span class="msg-text">"Nah, diam berarti iya."</span></div>
+                <div class="msg-row"><span class="action-text">Naya tertawa kecil.</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Iya."</span></div>
+                <div class="msg-row"><span class="sender salsa">Salsa:</span><span class="msg-text">"Dia tahu?"</span></div>
+                <div class="msg-row"><span class="action-text">Naya menggeleng.</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Belum."</span></div>
+                <div class="msg-row"><span class="sender rani">Rani:</span><span class="msg-text">"Kenapa?"</span></div>
+            </div>
+
+            <p>Naya melihat chat Arga.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku takut."</span></div>
+                <div class="msg-row"><span class="sender salsa">Salsa:</span><span class="msg-text">"Takut ditolak?"</span></div>
+                <div class="msg-row"><span class="action-text">Naya menggeleng.</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Takut semuanya berubah."</span></div>
+            </div>
+
+            <p>Sementara itu, Arga sama sekali tidak tahu bahwa dirinya sedang menjadi topik pembicaraan. Baginya, hubungan mereka terasa sederhana. Dia hanya tahu bahwa dia nyaman berbicara dengan Naya. Dan semakin hari, dia semakin menunggu percakapan mereka.</p>
+        </div>
+
+        <!-- ADEGAN 3 -->
+        <div class="scene">
+            <div class="scene-title">ADEGAN 3 — DUA MINGGU</div>
+            <p>Hari demi hari berlalu. Naya dan Arga semakin dekat. Mereka membicarakan makanan, keluarga, masa lalu, hingga hal-hal kecil yang biasanya tidak mereka ceritakan kepada orang lain.</p>
+
+            <p>Suatu malam, Arga mengetik:</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku nyaman ngobrol sama lu."</span></div>
+            </div>
+
+            <p>Naya tersenyum.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku juga."</span></div>
+            </div>
+
+            <p>Naya sebenarnya ingin mengatakan sesuatu yang lebih. Namun dia mengurungkan niatnya.</p>
+
+            <p><strong>Hari ke-14.</strong></p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Jangan berubah ya."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Kenapa?"</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Takut kehilangan orang yang bikin aku nyaman."</span></div>
+            </div>
+
+            <p>Arga membaca pesan itu. Untuk beberapa detik, dia tersenyum sendiri. Kemudian dia membalas:</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku nggak akan ke mana-mana."</span></div>
+            </div>
+
+            <p>Bagi Arga, kalimat itu sederhana. Dia benar-benar bermaksud untuk tetap ada. Dia tidak tahu bahwa bagi Naya, kalimat itu justru membuat semuanya terasa semakin serius.</p>
+        </div>
+
+        <!-- ADEGAN 4 -->
+        <div class="scene">
+            <div class="scene-title">ADEGAN 4 — NAYA MEMBLOKIR ARGA</div>
+            <p>Pagi itu Naya membuka profil Arga. Dia menatap layar cukup lama. Kemudian menekan tombol <strong>Blokir</strong>. Selesai.</p>
+            <p>Namun bagi Arga, semuanya tidak sesederhana itu. Beberapa jam kemudian, Arga membuka WhatsApp. Dia mencoba mengirim pesan. Tidak terkirim. Dia mencoba lagi. Tetap sama.</p>
+            <p>Arga melihat profil Naya. Kemudian dia sadar. Dia telah diblokir.</p>
+            <p>Arga terdiam. Dia tidak mengerti. Semalam mereka masih berbicara seperti biasa. Tidak ada pertengkaran. Tidak ada masalah. Tidak ada tanda bahwa semuanya akan berhenti begitu saja.</p>
+
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Kenapa?"</span></div>
+            </div>
+
+            <p>Itulah satu-satunya pertanyaan yang muncul di kepalanya. Bukan karena dia marah. Bukan karena dia ingin memaksa Naya kembali. Dia hanya ingin tahu apa yang salah.</p>
+            <p>Di sisi lain, Naya juga merasakan hal yang sama beratnya. Dia masih menyukai Arga. Namun dia takut perasaannya semakin dalam.</p>
+        </div>
+
+        <!-- ADEGAN 5 & SETERUSNYA (LENGKAP DI SITUS WEB) -->
+        <div class="scene">
+            <div class="scene-title">ADEGAN 5 — AKUN BARU</div>
+            <p>Beberapa hari kemudian, Arga membuat akun lain. Dia tidak berniat mengganggu. Dia hanya ingin mendapatkan satu jawaban. Sebuah penjelasan.</p>
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Hai, Nay."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Ini siapa?"</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Arga."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Kenapa bikin akun baru?"</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku cuma mau ngomong."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku udah blokir kamu."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku tahu."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku cuma mau penjelasan."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Ga, kamu ganggu."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku cuma mau tahu salahku apa."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku nggak mau ngobrol."</span></div>
+            </div>
+            <p>Naya memblokirnya. Arga kembali menatap layar. Kali ini tidak ada lagi yang bisa dia lakukan.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 6 — AKUN KEDUA</div>
+            <p>Keesokan harinya, Arga masih memikirkan semuanya. Dia terus bertanya kepada dirinya sendiri. Apa dia melakukan sesuatu? Apa ada perkataannya yang salah? Apa selama ini Naya sebenarnya tidak nyaman?</p>
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Nay, maaf."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Kenapa kamu terus-terusan cari aku?"</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Karena aku masih bingung."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku udah bilang jangan ganggu."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Tapi aku cuma pengin bicara sekali."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku nggak mau."</span></div>
+            </div>
+            <p>Arga akhirnya berhenti mengetik. Beberapa detik kemudian, Naya memblokirnya lagi.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 7 — NAYA MULAI MARAH</div>
+            <p>Beberapa waktu kemudian, Arga kembali muncul. Akun baru. Pesan baru.</p>
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Nay."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Maaf."</span></div>
+                <div class="msg-row"><span class="sender arga">Arga:</span><span class="msg-text">"Aku cuma pengin tahu apa salahku."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Kenapa kamu nggak ngerti?"</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Berhenti. Aku udah bilang kamu ganggu."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Chat kamu sampah."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku risi lihat kamu terus-terusan chat aku."</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Aku nggak mau lagi berhubungan sama kamu. Tolong berhenti cari aku."</span></div>
+            </div>
+            <p>Arga menatap layar cukup lama. Dadanya terasa berat. Naya memblokirnya. Dan kali ini Arga sadar. Mungkin dia memang harus berhenti.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 8 — SETELAH MEMBLOKIR</div>
+            <p>Naya meletakkan ponselnya. Dia membuka galeri. Ada screenshot percakapan mereka.</p>
+            <div class="quote-box">"Gue nyaman ngobrol sama lu."</div>
+            <p>Naya menatapnya lama. Dia masih menyukai Arga. Itulah masalahnya.</p>
+            <p>Sementara itu, Arga duduk sendirian. Dia menutup chat tersebut. Untuk pertama kalinya, Arga memilih tidak mencari Naya lagi.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 9 — MALAM ITU</div>
+            <p>Malamnya Naya menghubungi Salsa.</p>
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Sal, aku tadi keterlaluan nggak? Aku bilang chat dia sampah."</span></div>
+                <div class="msg-row"><span class="sender salsa">Salsa:</span><span class="msg-text">"Kenapa lu bilang begitu?"</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Karena aku pengin dia berhenti. Tapi sekarang aku malah merasa bersalah."</span></div>
+            </div>
+            <p>Sementara itu, Arga mulai menerima satu kenyataan: Naya sudah meminta jarak. Dan dia harus menghormatinya.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 10 — BEBERAPA BULAN KEMUDIAN</div>
+            <p>Waktu berlalu. Suatu sore, sebuah pesan masuk dari teman Arga.</p>
+            <div class="chat-container">
+                <div class="msg-row"><span class="sender orang">Orang Baru:</span><span class="msg-text">"Arga cuma pengin tahu kabar kamu. Kamu gak kangen seseorang?"</span></div>
+                <div class="msg-row"><span class="sender naya">Naya:</span><span class="msg-text">"Kangen pacarku. Udah ya, Ga. Aku cape terus-terusan diganggu sama kamu. Be nice plis. Izin block."</span></div>
+            </div>
+            <p>Naya memblokirnya. Arga hanya terdiam saat mendapat kabar itu. Dia membuka chat lama mereka untuk terakhir kalinya, lalu menghapus kolom pencarian namanya dan benar-benar melepaskan.</p>
+        </div>
+
+        <div class="scene">
+            <div class="scene-title">ADEGAN 11 — DUA ORANG YANG SAMA-SAMA DIAM</div>
+            <p>Malam itu, keduanya tidak tahu bahwa mereka sama-sama mengingat hal yang sama.</p>
+            <p>Dua minggu. Hanya dua minggu. Namun dua minggu itu meninggalkan sesuatu yang jauh lebih lama.</p>
+            
+            <div class="quote-box center">
+                memaksa seseorang untuk tetap tinggal bukanlah cara untuk mempertahankannya.
+            </div>
+
+            <p>Layar ponsel Naya mati. Layar ponsel Arga juga mati. Hanya dua orang yang pernah begitu dekat... dan sekarang harus belajar menjadi asing.</p>
+        </div>
+
+        <div class="quote-box center">
+            "Terkadang, melepaskan adalah bentuk cinta yang paling tulus,bukan karna kita yang sudah lelah, tapi karna kita yang ingin melihatnya bahagia."
+        </div>
+
+        <div class="ending-box">
+            <div class="ending-title">TAMAT</div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+        }
+
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+    </script>
+</body>
+</html>
